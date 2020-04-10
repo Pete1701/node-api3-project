@@ -1,11 +1,11 @@
 const express = require('express');
 
 const User = require("./userDb.js");
-const Post = require('../posts/postDb');
+const Post = require('../posts/postDb.js');
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
+router.post('/', validateUser, (req, res) => {
   // console.log(req.body);
   User.insert(req.body)
   .then(user => {res.status(201).json(user);})
@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
 });
 
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   Post.getById(req.params.id)
     .then((post) => {
       if (post) {
@@ -63,7 +63,7 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   Post.getById(req.params.id)
     .then((post) => {
       if (post) {
@@ -80,7 +80,7 @@ router.get('/:id/posts', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
   const id = req.params.id;
   User.remove(id)
     .then((user) => {
@@ -96,7 +96,7 @@ router.delete('/:id', (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, validateUser, (req, res) => {
   User.update(req.params.id, req.body)
     .then((user) => {
       if (user) {
